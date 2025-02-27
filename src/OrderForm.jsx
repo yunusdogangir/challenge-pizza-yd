@@ -57,16 +57,44 @@ const Header = () => {
 };
 
 const ContentBox = () => {
-    const [selectedSize, setSelectedSize] = useState("small");
-    const [selectedDough, setSelectedDough] = useState(""); // Hamur seçimi için durum
-    const doughOptions = ["İnce Hamur", "Normal Hamur"]; // Hamur seçenekleri
+    const [selectedSize, setSelectedSize] = useState("");
+    const [selectedDough, setSelectedDough] = useState("");
+    const doughOptions = ["İnce Hamur", "Normal Hamur"];
 
+    // Boyut değişimi
     const handleSizeChange = (event) => {
         setSelectedSize(event.target.value);
     };
 
+    // Hamur değişimi
     const handleDoughChange = (event) => {
         setSelectedDough(event.target.value);
+    };
+
+    // Malzeme seçimi
+    const toppings = [
+        "Pepperoni", "Sosis", "Kanada Jambonu", "Tavuk Izgara",
+        "Soğan", "Domates", "Mısır", "Sucuk", "Jalepeno",
+        "Sarımsak", "Biber", "Ananas", "Kabak"
+    ];
+
+    const [selectedToppings, setSelectedToppings] = useState([
+        "Pepperoni", "Sosis", "Mısır", "Jalepeno", "Ananas"
+    ]);
+
+    const handleToppingChange = (topping) => {
+        if (selectedToppings.includes(topping)) {
+            setSelectedToppings(selectedToppings.filter(item => item !== topping));
+        } else if (selectedToppings.length < 10) {
+            setSelectedToppings([...selectedToppings, topping]);
+        }
+    };
+
+    // Sayı arttırma
+    const [count, setCount] = useState(1);
+    const increase = () => setCount(count + 1);
+    const decrease = () => {
+        if (count > 1) setCount(count - 1);
     };
 
     return (
@@ -79,7 +107,7 @@ const ContentBox = () => {
             top: "207px",
             left: "50%",
             transform: "translateX(-50%)",
-            backgroundColor: "#F5F5DC", // burası silinicek ...
+            backgroundColor: "#F5F5DC",
             padding: "20px",
             marginTop: "50px",
         }}>
@@ -108,15 +136,15 @@ const ContentBox = () => {
             </p>
 
             {/* Boyut Seçme Kısmı */}
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "50px" }}>
-                <h3 style={{ display: "flex", flexDirection: "column", color: "#292929", fontSize: "20px" }}>Boyut Seç</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px" }}>
                 <div style={{ display: "flex", flexDirection: "column" }}>
+                    <h3 style={{ display: "flex", color: "#292929", fontSize: "20px" }}>Boyut Seç</h3>
                     <label style={{ margin: "5px 0", fontSize: "16px", color: "#5F5F5F" }}>
                         <input
-                            type="radio" // tek seçeneğin işaretlenmesi için
-                            value="small" // değerin güncellendiği kısım
-                            checked={selectedSize === "small"} // seçileni gösteren yer
-                            onChange={handleSizeChange} // butona bağlı değişen fonksiyonumuz
+                            type="radio"
+                            value="small"
+                            checked={selectedSize === "small"}
+                            onChange={handleSizeChange}
                             style={{ marginRight: "10px" }}
                         />
                         Küçük
@@ -142,17 +170,106 @@ const ContentBox = () => {
                         Büyük
                     </label>
                 </div>
-                {/* Hamur Seçimi Dropdown menüsü */} 
+                {/* Hamur Seçimi Dropdown menüsü */}
                 <div>
-                    <h3>Hamur Seç:</h3> 
-                    <select value={selectedDough} onChange={handleDoughChange} style={{ padding: "10px", fontSize: "16px", borderRadius: "5px", border: "1px solid #ccc" }}>
+                    <h3>Hamur Seç:</h3>
+                    <select value={selectedDough} onChange={handleDoughChange} style={{ padding: "10px", fontSize: "12px", borderRadius: "3px", border: "1px solid #ccc" }}>
                         <option value="" disabled>Hamur Kalınlığını Seç</option>
-                        {doughOptions.map((option, index) => ( //burda döngüye alma ve etiket oluşturma kısmı var ve yeniz dizi oluşturma
-                            <option key={index} value={option}>{option}</option> // index anahtar 
+                        {doughOptions.map((option, index) => (
+                            <option key={index} value={option}>{option}</option>
                         ))}
                     </select>
                 </div>
             </div>
+
+            <div style={{ display: "flex", paddingTop: "20px", flexDirection: "column", textAlign: "left" }}>
+                {/* Ek Malzemeler */}
+                <h3 style={{ fontSize: "20px", color: "#292929" }}>Ek Malzemeler</h3>
+                <p style={{ fontSize: "16px", color: "#5F5F5F" }}>En fazla 10 malzeme seçebilirsiniz.</p>
+                <div style={{}}>
+                    {toppings.map((topping) => (
+                        <label key={topping} style={{ fontSize: "16px", color: "#5F5F5F", margin: "10px", display: "inline-flex", gap: "13px", width: "29%" }}>
+                            <input
+                                type="checkbox"
+                                checked={selectedToppings.includes(topping)}
+                                onChange={() => handleToppingChange(topping)}
+                                style={{}}
+                            />
+                            {topping}
+                        </label>
+                    ))}
+                </div>
+            </div>
+
+            <div style={{ marginTop: "20px", textAlign: "left", width: "96%" }}>
+                <label htmlFor="orderNote" style={{ fontSize: "20px", color: "#292929", fontWeight: "bold" }}>
+                    Sipariş Notu
+                </label>
+                <textarea
+                    id="orderNote"
+                    placeholder="Siparişine eklemek istediğin bir not var mı?"
+                    style={{
+                        width: "100%",
+                        height: "56px",
+                        padding: "10px",
+                        fontSize: "14px",
+                        border: "1px solid #D9D9D9",
+                        borderRadius: "6px",
+                        marginTop: "10px",
+                        resize: "none",
+                        color: "#5F5F5F"
+                    }}
+                />
+            </div>
+
+            <hr style={{ border: "1px solid #5F5F5F80", margin: "20px 0", width: "100%" }} />
+            
+            {/* Sayı artırma azaltma */}
+                <div style={{justifyContent:"space-between"}}>
+                    <div style={{ marginTop: "20px", textAlign: "left",  }}>
+                        <h3 style={{ fontSize: "20px", color: "#292929", fontWeight: "bold", }}>Adet</h3>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <button
+                                onClick={decrease}
+                                style={{
+                                    backgroundColor: "#FDC913",
+                                    border: "1px solid  #FDC913 ",
+                                    padding: "5px 10px",
+                                    fontSize: "16px",
+                                    cursor: "pointer",
+                                    
+                                }}
+                            >
+                                -
+                            </button>
+                            <span style={{
+                                    border: "1px solid #D9D9D9",
+                                    padding: "3px 12px",
+                                    fontSize: "16px",
+                                    borderRadius:"7px"
+                                
+                             }}>
+                                {count}
+                            </span>
+                            <button
+                                onClick={increase}
+                                style={{
+                                    backgroundColor: "#FDC913",
+                                    border: "1px solid #FDC913 ",
+                                    padding: "5px 10px",
+                                    fontSize: "16px",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div> 
+                    <div>  
+                    // sipariş toplama bölümü buraya gelicek
+                    </div>
+                
+                </div>
         </div>
     );
 };
